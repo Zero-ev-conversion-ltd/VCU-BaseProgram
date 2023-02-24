@@ -2,8 +2,6 @@
 #include "canmessage-mbed.h"
 #include "vcupinmapp.h"
 #include <cstdint>
-#include "mbed_events.h"
-using namespace std::chrono_literals;
 
 #define LSB 0
 #define MSB 1
@@ -14,8 +12,6 @@ CAN_message_t outMsg;
 CANMessage inMsg;
 
 Thread ms200;
-
-
 
 DigitalOut led(LED1);
 DigitalIn canFault(M_CAN1_NFAULT);
@@ -65,11 +61,13 @@ void flashled(){
 
 void testDAC(){
     if (throt5vfdbkin) {
-        throttleOut1.write_u16(dacout1mv * 6.5534);         //65535 (full 16 bit) devided by 2 due to dac ration of double
-        throttleOut2.write_u16(dacout2mv * 6.5534);         //(65535/2)/5000 = 6.5534
-        //throttleOut1.write(0.757f);     //full range (5v out)
-        //throttleOut2.write(0.3785f);    //half range (2.5v out)
+        //Full range is 0.757 which equates to 2.5v in op amp input pin
+        //op amp then doubles this to give 5v output, hence 0.3785 would give 2.5v
+        //0.757 / 5000 gives multiplier of 0.0001514 to allow input of mV
+        throttleOut1.write(dacout1mv * 0.0001514);
+        throttleOut2.write(dacout2mv * 0.0001514);
     } else {
+        //Dont allow DAC output if vref input not detected to protect DAC's
         throttleOut1.write_u16(0 * 6.5534);
         throttleOut2.write_u16(0 * 6.5534);
     }
@@ -105,7 +103,7 @@ bool send_can2(){
 }
 
 void can1Read(CANMessage inMsg){
-  printf("CAN 1 Receive\r\n");
+  //printf("CAN 1 Receive\r\n");
   switch (inMsg.id) {
     case 0x3:
       //variable = CAN_decode(&inMsg, 32, 16, LSB, SIGNED, 1, 0);
@@ -117,7 +115,7 @@ void can1Read(CANMessage inMsg){
 
 void can2Read(CANMessage inMsg){
   flashled();
-  printf("CAN 2 Receive\r\n");
+  //printf("CAN 2 Receive\r\n");
   switch (inMsg.id) {
     case 0x3:
       //variable = CAN_decode(&inMsg, 32, 16, LSB, SIGNED, 1, 0);
