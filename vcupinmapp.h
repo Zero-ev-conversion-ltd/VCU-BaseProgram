@@ -1,7 +1,6 @@
-#ifndef felltenDevices
-#define felltenDevices
+#ifndef vcupinmapp
+#define vcupinmapp
 
-//Use this line to define what hardware pin mapping to use
 #define hardwareVCU
 
 #ifdef hardwareVCU
@@ -21,7 +20,7 @@
     #define analogin4 PC_3
     #define throttlefeedback1 PB_1      //Used for BOOT1 - conflict!!!
     #define throttlefeedback2 PB_10     //cant use PB_10 as ADC input!!!
-    #define hbrdige1 PA_6   //to instantiate below down
+    #define hbridge1 PA_6   //to instantiate below down
     #define hbridge2 PA_7
     #define ctrlpilot PA_0
     #define proxpilot PA_1
@@ -44,9 +43,4 @@
     #define chargenable PB_6
     #define watchdog PB_7
 #endif
-
-#ifdef hardwareContractorController
-    #define statusledpin PA_5
-#endif
-
 #endif
