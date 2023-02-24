@@ -139,60 +139,24 @@ void testECUfunctionality(){
     }
 }
 
-void testECUfunctionality2(){
-        //flashled();
-        testDAC();
-        testUART();
-        testADC();
-        send_can1();
-        send_can2();
-        return;
-}
-
 void checkcan(){
     if(can1.read(inMsg)){can1Read(inMsg);}
     if(can2.read(inMsg)){can2Read(inMsg);}
 }
 
-EventQueue queue;
-Event<void()> event1(&queue, testECUfunctionality2);
-Event<void()> event2(&queue, flashled);
-
-void post_events(void){
-    event1.post();      // Event1 with a value of 1
-    event2.post();      // Event1 with a value of 2
-}
-
 int main(){
 
     //EventQueue queue;
-
     //queue.call_every(200ms, &testECUfunctionality);
-    //queue.call_every(1ms, &checkcan);
+    //queue.call_every(1ms, &checkcan);     //cant call multiple queue different times
     //queue.call_every(500ms, &testUART);
     //queue.dispatch_forever();
 
-    //ms200.start(testECUfunctionality);
-
-    Thread event_thread;
-
-    event1.delay(10ms);       // Starting delay - 100 msec
-    event1.period(200ms);      // Delay between each event - 200msec
-
-    event2.delay(20ms);           // Starting delay - 400 msec
-    event2.period(100ms);   // Single non periodic event
-
-    event_thread.start(callback(post_events));
-    event_thread.join();
-    bool dispatchonce = false;
+    ms200.start(testECUfunctionality);
 
     //Need to poll canbus as mbed ran rx interrupts are broken
     while(true){
         if(can1.read(inMsg)){can1Read(inMsg);}
         if(can2.read(inMsg)){can2Read(inMsg);}
-        if(!dispatchonce){
-            queue.dispatch_forever();
-            dispatchonce = false;
-        }
     }
 }
