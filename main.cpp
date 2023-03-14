@@ -74,7 +74,7 @@ void testDAC(){
 }
 
 void testUART(){
-    printf("CU Stat:\r\n");
+    printf("VCU Stat:\r\n");
     printf("Throt in 1: %d\r\n", analoginthrot1mv);
     printf("Throt in 2: %d\r\n", analoginthrot2mv);
 }
@@ -143,12 +143,6 @@ void checkcan(){
 }
 
 int main(){
-
-    //EventQueue queue;
-    //queue.call_every(200ms, &testECUfunctionality);
-    //queue.call_every(1ms, &checkcan);     //cant call multiple queue different times
-    //queue.call_every(500ms, &testUART);
-    //queue.dispatch_forever();
 
     ms200.start(testECUfunctionality);
 
